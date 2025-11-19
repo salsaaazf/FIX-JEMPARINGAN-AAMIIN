@@ -8,7 +8,6 @@ const authStore = useAuthStore()
 
 <template>
   <LoginView v-if="!authStore.user" />
-
   <div v-else>
     
     <InputPage v-if="authStore.role === 'committee'" />

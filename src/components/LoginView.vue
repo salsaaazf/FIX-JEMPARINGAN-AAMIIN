@@ -211,7 +211,7 @@ p {
   border: none;
   padding: 15px;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 20px;  
   font-weight: 600;
   display: flex; 
   justify-content: center; 
