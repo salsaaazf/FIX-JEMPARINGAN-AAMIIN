@@ -5,6 +5,7 @@ import { useJemparinganStore } from '@/stores/jemparinganStore'
 import LoginView from '@/components/LoginView.vue'
 import InputPage from '@/components/InputPage.vue'
 import rekapTable from '@/components/rekap-table.vue'
+import InputScorePage from '@/components/InputScorePage.vue'
 
 const store = useInputStore()
 const authStore = useAuthStore()
@@ -17,6 +18,8 @@ const jemparinganStore = useJemparinganStore()
   <div v-else>
     
     <InputPage v-if="authStore.role === 'committee'" />
+
+    <InputScorePage v-else-if="authStore.role === 'score_input'" /> <rekap-table v-else-if="authStore.role === 'recap'" />
 
     <div v-else-if="authStore.role === 'participant'" class="placeholder-page">
       <h1>Halaman Participant</h1>

@@ -86,18 +86,19 @@ const handleAction = (item) => {
     icon: 'question',
     showDenyButton: true,
     showCancelButton: true,
-    confirmButtonText: 'Scan',
+    confirmButtonText: 'Panah ku',
     denyButtonText: `Edit Data`,
     confirmButtonColor: '#3B5D50',
     denyButtonColor: '#d33',
     reverseButtons: true
   }).then((result) => {
     if (result.isConfirmed) {
-      simulateScan(item)
+      jemparinganStore.setMatchInfo(item.round, item.target);
+      authStore.role = 'score_input';
     } else if (result.isDenied) {
       startEditing(item)
     }
-    /*Data masih nambah ke bawah!!!*/ 
+    
   })
 }
 
@@ -126,6 +127,7 @@ const handleDisplay = (item) =>{
   });
 }
 
+/*
 const simulateScan = (item) => {
   Swal.fire({
     title: 'Start Scan...',
@@ -142,6 +144,7 @@ const simulateScan = (item) => {
     }
   })
 }
+*/
 
 /*
 const cancelEdit = () => {
