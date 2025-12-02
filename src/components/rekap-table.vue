@@ -108,9 +108,6 @@ const handleRowPageChanges = (newValue) => {
           <option :value="50">50 rows</option>
         </select>
         </div>
-        <button class="submitBtn">
-          Submit Data
-        </button>
         </div>
         
         
