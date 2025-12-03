@@ -4,44 +4,8 @@ import { KeyRound, Target } from 'lucide-vue-next';
 
 export const useJemparinganStore = defineStore('jemparingan', {
   state: () => ({
-    redHits: [ /* { nomorPemanah: 1, nama: 'Pemanah 1' }, //ini semua cuma dummy biar akuu bisa lihat hasilnya keluar ga ditable
-  { nomorPemanah: 2, nama: 'Pemanah 2' },
-  { nomorPemanah: 3, nama: 'Pemanah 3' },
-  { nomorPemanah: 4, nama: 'Pemanah 4' },
-  { nomorPemanah: 5, nama: 'Pemanah 5' },
-  { nomorPemanah: 6, nama: 'Pemanah 6' },
-  { nomorPemanah: 7, nama: 'Pemanah 7' },
-  { nomorPemanah: 8, nama: 'Pemanah 8' },
-  { nomorPemanah: 9, nama: 'Pemanah 9' },
-  { nomorPemanah: 10, nama: 'Pemanah 10' },
-  { nomorPemanah: 11, nama: 'Pemanah 11' },
-  { nomorPemanah: 12, nama: 'Pemanah 12' },
-  { nomorPemanah: 13, nama: 'Pemanah 13' },
-  { nomorPemanah: 14, nama: 'Pemanah 14' },
-  { nomorPemanah: 15, nama: 'Pemanah 15' },
-  { nomorPemanah: 16, nama: 'Pemanah 16' },
-  { nomorPemanah: 17, nama: 'Pemanah 17' },
-  { nomorPemanah: 18, nama: 'Pemanah 18' },*/], 
-    whiteHits: [ /* { nomorPemanah: 1, nama: 'Pemanah 1' }, //ini semua cuma dummy biar akuu bisa lihat hasilnya keluar ga ditable
-  { nomorPemanah: 2, nama: 'Pemanah 2' },
-  { nomorPemanah: 3, nama: 'Pemanah 3' },
-  { nomorPemanah: 4, nama: 'Pemanah 4' },
-  { nomorPemanah: 5, nama: 'Pemanah 5' },
-  { nomorPemanah: 7, nama: 'Pemanah 7' },
-  { nomorPemanah: 8, nama: 'Pemanah 8' },
-  { nomorPemanah: 9, nama: 'Pemanah 9' },
-  { nomorPemanah: 10, nama: 'Pemanah 10' },
-  { nomorPemanah: 11, nama: 'Pemanah 11' },
-  { nomorPemanah: 12, nama: 'Pemanah 12' },
-  { nomorPemanah: 13, nama: 'Pemanah 13' },
-  { nomorPemanah: 15, nama: 'Pemanah 15' },
-  { nomorPemanah: 16, nama: 'Pemanah 16' },
-  { nomorPemanah: 17, nama: 'Pemanah 17' },
-  { nomorPemanah: 18, nama: 'Pemanah 18' },
-  { nomorPemanah: 19, nama: 'Pemanah 19' },
-  { nomorPemanah: 20, nama: 'Pemanah 20' },
-  { nomorPemanah: 21, nama: 'Pemanah 21' },
-  { nomorPemanah: 22, nama: 'Pemanah 22' },*/ ], //dummy selesai
+    redHits: [], 
+    whiteHits: [], 
 
     tableEntries: [],
 
@@ -55,7 +19,6 @@ export const useJemparinganStore = defineStore('jemparingan', {
     finalRecap: (state) => {
       const summary = {}; 
 
-      // --- A. Proses Data Merah (redHits) ---
       state.redHits.forEach(hit => {
         const { nomorPemanah, nama } = hit;
         
@@ -68,11 +31,11 @@ export const useJemparinganStore = defineStore('jemparingan', {
             total: 0,
           };
         }
-        // Tambahkan 3 poin merah
+        
         summary[nomorPemanah].red += 3;
       });
 
-      // --- B. Proses Data Putih (whiteHits) ---
+     
       state.whiteHits.forEach(hit => {
         const { nomorPemanah, nama } = hit;
 
@@ -85,27 +48,69 @@ export const useJemparinganStore = defineStore('jemparingan', {
             total: 0,
           };
         }
-        // Tambahkan 1 poin putih
+       
         summary[nomorPemanah].white += 1;
       });
       
-      // --- C. Hitung Total dan Konversi ke Array ---
+      
       const finalArray = Object.values(summary).map(player => {
         player.total = player.red + player.white;
         return player;
       });
 
-      // Urutkan berdasarkan total (opsional)
+      
       return finalArray.sort((a, b) => b.total - a.total);
     },
   },
 
   actions: {
+    getStorageKey(round, target) {
+      return `jemparingan_data_${round}_${target}`; // Contoh: jemparingan_data_1_A
+    },
+
+    saveSessionData() {
+        if (this.matchInfo.round === '_' || this.matchInfo.target === '_') {
+            return; // Jangan simpan jika match info belum di-set
+        }
+      const key = this.getStorageKey(this.matchInfo.round, this.matchInfo.target);
+        const dataToSave = JSON.stringify({
+            redHits: this.redHits,
+            whiteHits: this.whiteHits,
+            tableEntries: this.tableEntries
+        });
+        localStorage.setItem(key, dataToSave);
+    },
+
+    loadSessionData(round, target) {
+      const key = this.getStorageKey(round, target);
+      const storedData = localStorage.getItem(key);
+      
+      // 1. Reset state Pinia (agar tabel kosong jika Round baru/data tidak ada)
+      this.redHits = [];
+      this.whiteHits = [];
+      this.tableEntries = [];
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          this.redHits = parsedData.redHits || [];
+          this.whiteHits = parsedData.whiteHits || [];
+          this.tableEntries = parsedData.tableEntries || [];
+        } catch(e) {
+          console.error("Error loading session data:", e);
+        }
+      }
+      
+      // 3. Set match info dan pindah
+      this.setMatchInfo(round, target);
+    },
+
     setRedHits(dataArray) {
       this.redHits = dataArray;
+      this.saveSessionData();
     },
     setWhiteHits(dataArray) {
       this.whiteHits = dataArray;
+      this.saveSessionData();
     },
     resetScores() {
         this.redHits = [];
@@ -117,6 +122,7 @@ export const useJemparinganStore = defineStore('jemparingan', {
     },
     addTableEntry(entry) {
         this.tableEntries.push(entry);
+        this.saveSessionData();
     }
   }
 });

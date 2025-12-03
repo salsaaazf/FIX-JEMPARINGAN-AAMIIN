@@ -93,7 +93,7 @@ const handleAction = (item) => {
     reverseButtons: true
   }).then((result) => {
     if (result.isConfirmed) {
-      jemparinganStore.setMatchInfo(item.round, item.target);
+      jemparinganStore.loadSessionData(item.round, item.target);
       authStore.role = 'score_input';
     } else if (result.isDenied) {
       startEditing(item)
@@ -121,7 +121,7 @@ const handleDisplay = (item) =>{
     timer: 2000,
     showConfirmButton: false,
     willClose: () => {
-      jemparinganStore.setMatchInfo(item.round, item.target);
+      jemparinganStore.loadSessionData(item.round, item.target);
       authStore.role = 'recap';
     }
   });
@@ -406,10 +406,6 @@ td {
   color: #333;
 }
 
-tr:first-child td { 
-  border-bottom: 2px solid #4A90E2; 
-  background-color: #F0F8FF; 
-} 
 
 .actions { 
   display: flex; 
